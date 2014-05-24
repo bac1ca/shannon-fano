@@ -39,12 +39,14 @@ public:
     virtual ~ShannonFano();
 
 public:
-    void createTable(char * str, long len);
+    void createTable(char* str, long len);
     void buildTree(tree* t, vector<row *> list);
     void generateCodeTable(tree* root);
+    void encode(char* str, char** data, int size);
 
 private:
     int find(vector<row *> table, char symbol);
+    int findCode(vector<code *> codes, char symbol);
 
     void printTable(vector<row *> table);
     void printCodeTable(vector<code *> codeTable);

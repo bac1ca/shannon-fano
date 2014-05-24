@@ -97,13 +97,13 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
         vector<row *> rightList(list.begin() + midIdx + 1, list.end());
 
 //        // TODO debug
-        if (true) {
-            cout << "-------------------------------" << endl;
-            printTable(leftList);
-            cout << "-------" << endl;
-            printTable(rightList);
-            cout << "-------------------------------" << endl;
-        }
+//        if (true) {
+//            cout << "-------------------------------" << endl;
+//            printTable(leftList);
+//            cout << "-------" << endl;
+//            printTable(rightList);
+//            cout << "-------------------------------" << endl;
+//        }
 
         tree* left = new tree;
         left->left = NULL;
@@ -153,6 +153,9 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
         // recursive call
         bypassTree(t->right, value, count);
     }
+}
+
+void ShannonFano::encode(char* str, char** data, int size) {
 
 }
 
@@ -174,17 +177,29 @@ void ShannonFano::printTable(vector<row *> table) {
 void ShannonFano::printCodeTable(vector<code *> codeTable) {
     for (int i = 0; i < codeTable.size(); i++) {
         const int len = 8 * sizeof(unsigned int);
-        cout << codeTable[i]->symbol << ": " << bitset<len>(codeTable[i]->cipher) << endl;
+        cout << codeTable[i]->symbol
+                << ": " << bitset<len>(codeTable[i]->cipher)
+                << ": " << codeTable[i]->lenght << endl;
     }
+}
+
+int ShannonFano::findCode(vector<code *> codes, char symbol) {
+    for (int i = 0; i < codes.size(); i++) {
+        if (symbol == codes[i]->symbol) {
+            return i;
+        }
+    }
+    return -1;
+
 }
 
 void ShannonFano::printTree(tree* tree) {
     if (tree->left != NULL) {
-        cout << "L " << endl;
+        //cout << "L " << endl;
         printTree(tree->left);
     }
     if (tree->right != NULL) {
-        cout << "R " << endl;
+        //cout << "R " << endl;
         printTree(tree->right);
     }
     if (tree->left == NULL && tree->right == NULL) {
