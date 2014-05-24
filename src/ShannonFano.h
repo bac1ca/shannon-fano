@@ -32,7 +32,7 @@ class ShannonFano {
 private:
     vector<row *> table;
     vector<code *> codeTable;
-    tree* root;
+    tree* m_root;
 
 public:
     ShannonFano();
@@ -45,8 +45,11 @@ public:
 
 private:
     int find(vector<row *> table, char symbol);
+
     void printTable(vector<row *> table);
     void printCodeTable(vector<code *> codeTable);
+    void printTree(tree* root);
+
     void buildTree(tree* t, vector<row *> table, int treeWeight);
     void bypassTree(tree* t, int value, int count);
 

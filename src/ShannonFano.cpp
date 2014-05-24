@@ -7,7 +7,7 @@
 #include <bitset>
 
 ShannonFano::ShannonFano() {
-    root = new tree;
+    m_root = new tree;
 }
 
 ShannonFano::~ShannonFano() {
@@ -41,22 +41,20 @@ void ShannonFano::createTable(char* str, long len) {
     printTable(table);
 
     // TODO
-    buildTree(root, table);
+    buildTree(m_root, table);
+    printTree(m_root);
 
-    // TODO
-    generateCodeTable(root);
-
+//    // TODO
+    generateCodeTable(m_root);
     printCodeTable(codeTable);
 }
 
 void ShannonFano::buildTree(tree* root, vector<row *> list) {
     int listWeight = 0;
     for (int i = 0; i < list.size(); i++) {
-        listWeight += table[i]->count;
+        listWeight += list[i]->count;
     }
-    cout << "listWeight: " << listWeight << endl;
-
-    buildTree(root, table, listWeight);
+    buildTree(root, list, listWeight);
 }
 
 void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
@@ -99,26 +97,22 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
         vector<row *> rightList(list.begin() + midIdx + 1, list.end());
 
 //        // TODO debug
-//        if (true) {
-//            cout << "-------------------------------" << endl;
-//            printTable(leftList);
-//            cout << "-------" << endl;
-//            printTable(rightList);
-//            cout << "-------------------------------" << endl;
-//        }
-
-        //TODO assert
-        if (leftList.size() + rightList.size() != size) {
+        if (true) {
             cout << "-------------------------------" << endl;
-            cout << "AAAAAAAAAAAA SIZE!!!!!!!!!!!!" << endl;
-            cout << "LEFT SIZE:" << leftList.size() << endl;
-            cout << "RIGHT SIZE:" << rightList.size() << endl;
+            printTable(leftList);
+            cout << "-------" << endl;
+            printTable(rightList);
             cout << "-------------------------------" << endl;
         }
 
         tree* left = new tree;
+        left->left = NULL;
+        left->right = NULL;
         t->left = left;
+
         tree* right = new tree;
+        right->left = NULL;
+        right->right = NULL;
         t->right = right;
 
         // recursive call
@@ -133,6 +127,7 @@ void ShannonFano::generateCodeTable(tree* root) {
 
 void ShannonFano::bypassTree(tree* t, int value, int count) {
     if (t == NULL) {
+        cerr << "WARN: input tree equals NULL" << endl;
         return;
     }
 
@@ -144,18 +139,21 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
         codeEntity->lenght = count;
         // adding new entry
         codeTable.push_back(codeEntity);
-    } else if (t->left != NULL) {
-        value = value << 1;
-        count++;
+        return;
+    }
+
+    value = value << 1;
+    count++;
+    if (t->left != NULL) {
         // recursive call
         bypassTree(t->left, value, count);
-    } else if (t->right != NULL) {
-        value = value << 1;
+    }
+    if (t->right != NULL) {
         value++;
-        count++;
         // recursive call
         bypassTree(t->right, value, count);
     }
+
 }
 
 int ShannonFano::find(vector<row *> table, char symbol) {
@@ -175,7 +173,21 @@ void ShannonFano::printTable(vector<row *> table) {
 
 void ShannonFano::printCodeTable(vector<code *> codeTable) {
     for (int i = 0; i < codeTable.size(); i++) {
-        const int len = sizeof(unsigned int);
+        const int len = 8 * sizeof(unsigned int);
         cout << codeTable[i]->symbol << ": " << bitset<len>(codeTable[i]->cipher) << endl;
+    }
+}
+
+void ShannonFano::printTree(tree* tree) {
+    if (tree->left != NULL) {
+        cout << "L " << endl;
+        printTree(tree->left);
+    }
+    if (tree->right != NULL) {
+        cout << "R " << endl;
+        printTree(tree->right);
+    }
+    if (tree->left == NULL && tree->right == NULL) {
+        cout << "LEAF " << tree->data->key << endl;
     }
 }
