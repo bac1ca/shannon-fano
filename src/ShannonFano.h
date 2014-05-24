@@ -10,22 +10,29 @@
 
 using namespace std;
 
+typedef struct _row {
+    char key;
+    int count;
+} row;
+
+typedef struct _tree {
+    row* data;
+    struct _tree *left;
+    struct _tree *right;
+} tree;
+
+typedef struct _code {
+    char symbol;
+    unsigned int cipher; // according to lab restrictions
+    int lenght;
+} code;
+
+
 class ShannonFano {
 private:
-    typedef struct _row {
-        char key;
-        int count;
-    } row;
-
     vector<row *> table;
-
-    typedef struct _node {
-        row tableRow;
-        struct _node *left;
-        struct _node *right;
-    } node;
-
-    node *m_head;
+    vector<code *> codeTable;
+    tree* root;
 
 public:
     ShannonFano();
@@ -33,10 +40,15 @@ public:
 
 public:
     void createTable(char * str, long len);
+    void buildTree(tree* t, vector<row *> list);
+    void generateCodeTable(tree* root);
 
 private:
     int find(vector<row *> table, char symbol);
     void printTable(vector<row *> table);
+    void printCodeTable(vector<code *> codeTable);
+    void buildTree(tree* t, vector<row *> table, int treeWeight);
+    void bypassTree(tree* t, int value, int count);
 
 };
 

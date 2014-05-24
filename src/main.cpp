@@ -22,8 +22,10 @@ int main() {
     streampos size;
     char * memblock;
 
-    ifstream file("/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt",
-            ios::in | ios::binary | ios::ate);
+//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
+    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
+
+    ifstream file(path,ios::in | ios::binary | ios::ate);
     if (file.is_open()) {
         size = file.tellg();
         memblock = (char *) malloc(size * sizeof(char));
