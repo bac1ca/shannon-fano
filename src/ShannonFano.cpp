@@ -11,50 +11,75 @@ ShannonFano::ShannonFano() {
 }
 
 ShannonFano::~ShannonFano() {
-    for (int i = 0; i < table.size(); i++) {
-        delete table[i];
+    for (int i = 0; i < m_freqTable.size(); i++) {
+        delete m_freqTable[i];
+    }
+    for (int i = 0; i < m_codeTable.size(); i++) {
+        delete m_codeTable[i];
     }
 
     // CLEAN TREE
-
-    // CLEAN CODE TABLE
+    // TODO METHOD CLEAR_ALL
 }
+
+vector<code *> ShannonFano::encode(char* str, long len) {
+    // TODO clear _All
+
+    m_freqTable = createFreqTable(str, len);
+
+    m_root = buildTree(m_freqTable);
+
+    generateCodeTable(m_root);
+
+    vector<code *> codeStream;
+    for (int i = 0; i < len; i++) {
+        char symbol = str[i];
+
+        int idx = findCode(m_codeTable, symbol);
+        if (idx == -1) {
+            cerr << "WARN: unknown symbol: " << symbol << endl;
+        } else {
+            codeStream.push_back(m_codeTable[idx]);
+        }
+    }
+    return codeStream;
+}
+
+vector<code *> ShannonFano::getCodeTable() {
+    return m_codeTable;
+}
+
 
 bool sortFunction (row* i, row* j) { return (i->count > j->count); }
 
-void ShannonFano::createTable(char* str, long len) {
+vector<row *> ShannonFano::createFreqTable(char* str, long len) {
+    vector<row *> freqTable;
+
     for (int i = 0; i < len; i++) {
         char symbol = str[i];
-        int idx = find(table, symbol);
+        int idx = find(freqTable, symbol);
         if (idx == -1) {
             row* tableRow  = new row;
             tableRow->key = symbol;
             tableRow->count = 1;
-            table.push_back(tableRow);
+            freqTable.push_back(tableRow);
         } else {
-            row* tableRow = table[idx];
+            row* tableRow = freqTable[idx];
             tableRow->count++;
         }
     }
-
-    sort(table.begin(), table.end(), sortFunction);
-    printTable(table);
-
-    // TODO
-    buildTree(m_root, table);
-    printTree(m_root);
-
-//    // TODO
-    generateCodeTable(m_root);
-    printCodes(codeTable);
+    sort(freqTable.begin(), freqTable.end(), sortFunction);
+    return freqTable;
 }
 
-void ShannonFano::buildTree(tree* root, vector<row *> list) {
+tree* ShannonFano::buildTree(vector<row *> list) {
+    tree* root = new tree;
     int listWeight = 0;
     for (int i = 0; i < list.size(); i++) {
         listWeight += list[i]->count;
     }
     buildTree(root, list, listWeight);
+    return root;
 }
 
 void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
@@ -138,7 +163,7 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
         codeEntity->cipher = value;
         codeEntity->lenght = count;
         // adding new entry
-        codeTable.push_back(codeEntity);
+        m_codeTable.push_back(codeEntity);
         return;
     }
 
@@ -155,9 +180,6 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
     }
 }
 
-void ShannonFano::encode(char* str, char** data, int size) {
-
-}
 
 int ShannonFano::find(vector<row *> table, char symbol) {
     for (int i = 0; i < table.size(); i++) {
@@ -187,7 +209,7 @@ int ShannonFano::findCode(vector<code *> codes, unsigned int cipher, int lenght)
 }
 
 
-void ShannonFano::printTable(vector<row *> table) {
+void ShannonFano::printFreqTable(vector<row *> table) {
     for (int i = 0; i < table.size(); i++) {
         cout << table[i]->key << ":  " << table[i]->count << endl;
     }
