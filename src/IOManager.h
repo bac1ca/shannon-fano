@@ -23,9 +23,6 @@ public:
     void flushData(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
     vector<code *> readData(char* fileName);
 
-private:
-    void flushCode(FILE* file, int code, int len);
-
 
 // TODO Remove it later
 public:

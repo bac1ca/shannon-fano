@@ -27,42 +27,35 @@ void IOManager::flushData(char* fileName,
         int codeStreamLen = codeStream.size();
         fwrite(&codeStreamLen, sizeof(int), 1, file);
 
-        m_cur = 0;
-        m_data = 0;
+
+        int cur = 0;
+        byte data = 0;
+
         for (int i = 0; i < codeStreamLen; i++) {
-            flushCode(file, codeStream[i]->cipher, codeStream[i]->lenght);
+            unsigned int cipher = codeStream[i]->cipher;
+            int lenght = codeStream[i]->lenght;
+
+            for (int i = lenght; i;) {
+                int bit = (cipher >> --i) & 0x1;
+                data = (data << 1) + bit;
+                cur++;
+
+                if (cur == 8) {
+                    fwrite(&data, sizeof(byte), 1, file);
+
+                    cur = 0;
+                    data = 0;
+                }
+            }
         }
-        // flush the tail of the codeStream
-        m_data = m_data << (8 - m_cur);
-        fwrite(&m_data, sizeof(byte), 1, file);
+        // write tail
+        data = data << (8 - cur);
+        fwrite(&data, sizeof(byte), 1, file);
 
         // close file
         fclose(file);
     }
 }
-
-void IOManager::flushCode(FILE* file, int code, int len) {
-
-    int shift = (m_cur + len) > 8 ? (m_cur + len) - 8 : 0;
-
-    m_data = m_data << (len - shift);
-    code = code >> shift;
-    m_data += (byte) code;
-
-    m_cur = m_cur + (len - shift);
-
-    if (m_cur == 8) {
-        fwrite(&m_data, sizeof(byte), 1, file);
-        m_data = 0;
-        m_cur  = 0;
-    }
-
-    if (shift > 0) {
-        cout << "recursive call" << endl;
-        flushCode(file, code, shift);
-    }
-}
-
 
 vector<code *> IOManager::readData(char* fileName) {
 
@@ -145,9 +138,10 @@ void IOManager::testIOManager() {
 
     vector<code *> codeStream;
     codeStream.push_back(&M);
+    codeStream.push_back(&N);
+    codeStream.push_back(&M);
     codeStream.push_back(&A);
-    codeStream.push_back(&N);
-    codeStream.push_back(&N);
+    codeStream.push_back(&M);
 
     ShannonFano::printCodes(codeTable);
 
