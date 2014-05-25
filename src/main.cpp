@@ -19,49 +19,51 @@
 using namespace std;
 
 
-int main() {
+
+
+int main(int argc, char *argv[]) {
+
+    if (argc != 2) {
+        cout <<"Invalid arguments! usage: "
+             << argv[0] << " <bookname>" << endl;
+        return 0;
+    }
+    char * path = argv[1];
+
 
     streampos size;
     char * memblock;
-
-    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
-//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
-
     ifstream file(path,ios::in | ios::binary | ios::ate);
     if (file.is_open()) {
         size = file.tellg();
-        memblock = (char *) malloc(size * sizeof(char));
+        memblock = new char [size];
         file.seekg(0, ios::beg);
         file.read(memblock, size);
         file.close();
-
-        ShannonFano s;
-        vector<code *> codeStream = s.encode(memblock, size);
-        vector<code *> codeTable  = s.getCodeTable();
-
-        IOManager ioManager;
-        ioManager.flushData("man.bin", codeTable, codeStream);
-
-        vector<code *> codeStreamZipped = ioManager.readData("man.bin");
-
-
-
-        ofstream outputFile;
-        outputFile.open ("out.txt");
-        for (int i = 0; i < codeStreamZipped.size(); i++) {
-            outputFile << codeStreamZipped[i]->symbol;
-        }
-        outputFile.close();
-
-
-
-        cout << endl << "size of file: " << size << endl;
-        free(memblock);
     } else {
-        cout << "Unable to open file";
+        cerr << "Unable to open bookfile!" << endl;
+        return -1;
     }
 
-//    IOManager ioManager;
-//    ioManager.testIOManager();
+    ShannonFano s;
+    vector<code *> codeStream = s.encode(memblock, size);
+    vector<code *> codeTable  = s.getCodeTable();
+
+    IOManager ioManager;
+    ioManager.flushData("man.bin", codeTable, codeStream);
+
+    vector<code *> codeStreamZipped = ioManager.readData("man.bin");
+
+
+    ofstream outputFile;
+    outputFile.open ("out.txt");
+    for (int i = 0; i < codeStreamZipped.size(); i++) {
+        outputFile << codeStreamZipped[i]->symbol;
+    }
+    outputFile.close();
+
+    cout << endl << "size of file: " << size << endl;
+
+    delete[] memblock;
     return 0;
 }

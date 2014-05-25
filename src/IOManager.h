@@ -6,7 +6,6 @@
 #define IOMANAGER_H_
 
 #include "ShannonFano.h"
-#include <stdio.h>
 
 typedef unsigned char byte;
 
@@ -20,10 +19,6 @@ public:
     void flushData(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
     vector<code *> readData(char* fileName);
 
-
-// TODO Remove it later
-public:
-    void testIOManager();
 };
 
 #endif /* IOMANAGER_H_ */

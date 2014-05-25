@@ -3,6 +3,7 @@
  */
 
 #include "IOManager.h"
+#include <stdio.h>
 
 IOManager::IOManager() {
 }
@@ -109,47 +110,4 @@ vector<code *> IOManager::readData(char* fileName) {
         cerr << "Problem while reading file: " << fileName << endl;
     }
     return codeStream;
-}
-
-
-
-void IOManager::testIOManager() {
-
-    code A;
-    A.symbol = 'A';
-    A.cipher = 0;
-    A.lenght = 2;
-
-    code N;
-    N.symbol = 'N';
-    N.cipher = 4;
-    N.lenght = 3;
-
-    code M;
-    M.symbol = 'M';
-    M.cipher = 5;
-    M.lenght = 3;
-
-    vector<code *> codeTable;
-    codeTable.push_back(&A);
-    codeTable.push_back(&N);
-    codeTable.push_back(&M);
-
-    vector<code *> codeStream;
-    codeStream.push_back(&M);
-    codeStream.push_back(&N);
-    codeStream.push_back(&M);
-    codeStream.push_back(&A);
-    codeStream.push_back(&M);
-
-    ShannonFano::printCodes(codeTable);
-
-    flushData("result.bin", codeTable, codeStream);
-
-
-    // Deserialize data
-    vector<code *> fileCodeStream = readData("result.bin");
-    ShannonFano::printCodes(fileCodeStream);
-
-    cout << "END OF THE TEST!!!" << endl;
 }
