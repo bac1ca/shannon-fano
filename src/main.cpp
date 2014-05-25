@@ -24,8 +24,8 @@ int main() {
     streampos size;
     char * memblock;
 
-//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
-    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
+    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
+//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
 
     ifstream file(path,ios::in | ios::binary | ios::ate);
     if (file.is_open()) {

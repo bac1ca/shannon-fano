@@ -7,29 +7,20 @@
 #include <bitset>
 
 ShannonFano::ShannonFano() {
-    m_root = new tree;
 }
 
 ShannonFano::~ShannonFano() {
-    for (int i = 0; i < m_freqTable.size(); i++) {
-        delete m_freqTable[i];
-    }
-    for (int i = 0; i < m_codeTable.size(); i++) {
-        delete m_codeTable[i];
-    }
-
-    // CLEAN TREE
-    // TODO METHOD CLEAR_ALL
+    clearResources();
 }
 
 vector<code *> ShannonFano::encode(char* str, long len) {
-    // TODO clear _All
+    clearResources();
 
     m_freqTable = createFreqTable(str, len);
 
-    m_root = buildTree(m_freqTable);
+    tree* root = buildTree(m_freqTable);
 
-    generateCodeTable(m_root);
+    generateCodeTable(root);
 
     vector<code *> codeStream;
     for (int i = 0; i < len; i++) {
@@ -49,7 +40,6 @@ vector<code *> ShannonFano::getCodeTable() {
     return m_codeTable;
 }
 
-
 bool sortFunction (row* i, row* j) { return (i->count > j->count); }
 
 vector<row *> ShannonFano::createFreqTable(char* str, long len) {
@@ -57,7 +47,7 @@ vector<row *> ShannonFano::createFreqTable(char* str, long len) {
 
     for (int i = 0; i < len; i++) {
         char symbol = str[i];
-        int idx = find(freqTable, symbol);
+        int idx = findRow(freqTable, symbol);
         if (idx == -1) {
             row* tableRow  = new row;
             tableRow->symbol = symbol;
@@ -75,7 +65,7 @@ vector<row *> ShannonFano::createFreqTable(char* str, long len) {
 tree* ShannonFano::buildTree(vector<row *> list) {
     tree* root = new tree;
     int listWeight = 0;
-    for (int i = 0; i < list.size(); i++) {
+    for (unsigned int i = 0; i < list.size(); i++) {
         listWeight += list[i]->count;
     }
     buildTree(root, list, listWeight);
@@ -103,7 +93,7 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
         int subWeight = 0;
         int middle = listWeight / 2;
 
-        int midIdx = 0;
+        unsigned int midIdx = 0;
         for (midIdx = 0; midIdx < list.size(); midIdx++) {
             subWeight += list[midIdx]->count;
             if (subWeight >= middle) {
@@ -166,8 +156,8 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
 }
 
 
-int ShannonFano::find(vector<row *> table, char symbol) {
-    for (int i = 0; i < table.size(); i++) {
+int ShannonFano::findRow(vector<row *> table, char symbol) {
+    for (unsigned int i = 0; i < table.size(); i++) {
         if (symbol == table[i]->symbol) {
             return i;
         }
@@ -176,7 +166,7 @@ int ShannonFano::find(vector<row *> table, char symbol) {
 }
 
 int ShannonFano::findCode(vector<code *> codes, char symbol) {
-    for (int i = 0; i < codes.size(); i++) {
+    for (unsigned int i = 0; i < codes.size(); i++) {
         if (symbol == codes[i]->symbol) {
             return i;
         }
@@ -185,7 +175,7 @@ int ShannonFano::findCode(vector<code *> codes, char symbol) {
 }
 
 int ShannonFano::findCode(vector<code *> codes, unsigned int cipher, int lenght) {
-    for (int i = 0; i < codes.size(); i++) {
+    for (unsigned int i = 0; i < codes.size(); i++) {
         if (cipher == codes[i]->cipher && lenght == codes[i]->lenght) {
             return i;
         }
@@ -193,18 +183,32 @@ int ShannonFano::findCode(vector<code *> codes, unsigned int cipher, int lenght)
     return -1;
 }
 
-
 void ShannonFano::printFreqTable(vector<row *> table) {
-    for (int i = 0; i < table.size(); i++) {
+    for (unsigned int i = 0; i < table.size(); i++) {
         cout << table[i]->symbol << ":  " << table[i]->count << endl;
     }
 }
 
 void ShannonFano::printCodes(vector<code *> codeTable) {
-    for (int i = 0; i < codeTable.size(); i++) {
+    for (unsigned int i = 0; i < codeTable.size(); i++) {
         const int len = 8 * sizeof(unsigned int);
         cout << codeTable[i]->symbol
                 << ": " << bitset<len>(codeTable[i]->cipher)
                 << ": " << codeTable[i]->lenght << endl;
     }
+}
+
+void ShannonFano::clearResources() {
+    for (unsigned int i = 0; i < m_freqTable.size(); i++) {
+        delete m_freqTable[i];
+    }
+    for (unsigned int i = 0; i < m_codeTable.size(); i++) {
+        delete m_codeTable[i];
+    }
+    for (unsigned int i = 0; i < m_treeCache.size(); i++) {
+        delete m_treeCache[i];
+    }
+    m_freqTable.clear();
+    m_codeTable.clear();
+    m_treeCache.clear();
 }

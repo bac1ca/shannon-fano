@@ -12,7 +12,7 @@ using namespace std;
 
 typedef struct _row {
     char symbol;
-    int count;
+    int  count;
 } row;
 
 typedef struct _tree {
@@ -30,9 +30,9 @@ typedef struct _code {
 
 class ShannonFano {
 private:
-    vector<row *> m_freqTable;
+    vector<row *>  m_freqTable;
     vector<code *> m_codeTable;
-    tree* m_root;
+    vector<tree *> m_treeCache;
 
 public:
     ShannonFano();
@@ -48,11 +48,13 @@ private:
     void  generateCodeTable(tree* root);
 
 private:
-    int find(vector<row *> table, char symbol);
-    int findCode(vector<code *> codes, char symbol);
-
     void buildTree(tree* t, vector<row *> table, int treeWeight);
     void bypassTree(tree* t, int value, int count);
+
+    // utility methods
+    int findRow(vector<row *> table, char symbol);
+    int findCode(vector<code *> codes, char symbol);
+    void clearResources();
 
 public:
     static void printFreqTable(vector<row *> table);
