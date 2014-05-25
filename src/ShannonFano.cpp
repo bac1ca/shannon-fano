@@ -60,7 +60,7 @@ vector<row *> ShannonFano::createFreqTable(char* str, long len) {
         int idx = find(freqTable, symbol);
         if (idx == -1) {
             row* tableRow  = new row;
-            tableRow->key = symbol;
+            tableRow->symbol = symbol;
             tableRow->count = 1;
             freqTable.push_back(tableRow);
         } else {
@@ -85,11 +85,7 @@ tree* ShannonFano::buildTree(vector<row *> list) {
 void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
     int size = list.size();
 
-    cout << "size: " << size << ", listWeight: " << listWeight;
-
     if (size <= 2) {
-        cout << " LEAF " << endl;
-
         tree* left = new tree;
         left->data = list[0];
         left->left = NULL;
@@ -115,20 +111,9 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
             }
         }
 
-        cout << " ............. " << "mid: " << middle << ", midIdx: " << midIdx << ", subWeight: " << subWeight  << endl;
-
         // divide list
         vector<row *> leftList(list.begin(), list.begin() + midIdx + 1);
         vector<row *> rightList(list.begin() + midIdx + 1, list.end());
-
-//        // TODO debug
-//        if (true) {
-//            cout << "-------------------------------" << endl;
-//            printTable(leftList);
-//            cout << "-------" << endl;
-//            printTable(rightList);
-//            cout << "-------------------------------" << endl;
-//        }
 
         tree* left = new tree;
         left->left = NULL;
@@ -159,7 +144,7 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
     if (t->left == NULL && t->right == NULL) {
         row* leaf = t->data;
         code* codeEntity = new code;
-        codeEntity->symbol = leaf->key;
+        codeEntity->symbol = leaf->symbol;
         codeEntity->cipher = value;
         codeEntity->lenght = count;
         // adding new entry
@@ -183,7 +168,7 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
 
 int ShannonFano::find(vector<row *> table, char symbol) {
     for (int i = 0; i < table.size(); i++) {
-        if (symbol == table[i]->key) {
+        if (symbol == table[i]->symbol) {
             return i;
         }
     }
@@ -211,7 +196,7 @@ int ShannonFano::findCode(vector<code *> codes, unsigned int cipher, int lenght)
 
 void ShannonFano::printFreqTable(vector<row *> table) {
     for (int i = 0; i < table.size(); i++) {
-        cout << table[i]->key << ":  " << table[i]->count << endl;
+        cout << table[i]->symbol << ":  " << table[i]->count << endl;
     }
 }
 
@@ -221,19 +206,5 @@ void ShannonFano::printCodes(vector<code *> codeTable) {
         cout << codeTable[i]->symbol
                 << ": " << bitset<len>(codeTable[i]->cipher)
                 << ": " << codeTable[i]->lenght << endl;
-    }
-}
-
-void ShannonFano::printTree(tree* tree) {
-    if (tree->left != NULL) {
-        //cout << "L " << endl;
-        printTree(tree->left);
-    }
-    if (tree->right != NULL) {
-        //cout << "R " << endl;
-        printTree(tree->right);
-    }
-    if (tree->left == NULL && tree->right == NULL) {
-        cout << "LEAF " << tree->data->key << endl;
     }
 }

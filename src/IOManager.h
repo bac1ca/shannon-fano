@@ -11,9 +11,6 @@
 typedef unsigned char byte;
 
 class IOManager {
-private:
-    int m_cur;
-    byte m_data;
 
 public:
     IOManager();

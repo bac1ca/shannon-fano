@@ -78,23 +78,22 @@ vector<code *> IOManager::readData(char* fileName) {
         // deserialize code stream
         int codeStreamLen = -1;
         fread(&codeStreamLen, sizeof(int), 1, file);
-        cout << "codeStreamLen: " << codeStreamLen << endl;
 
         int amount = 0;
         unsigned int cipher = 0;
         unsigned int lenght = 0;
 
-        while (fread(&m_data, sizeof(byte), 1, file) == 1
+        byte data = 0;
+        while (fread(&data, sizeof(byte), 1, file) == 1
                && amount < codeStreamLen) {
 
             for (int i = 0; i < 8 && amount < codeStreamLen; i++) {
-                int bit = ((m_data >> (7 - i))) & 0x1;
+                int bit = ((data >> (7 - i))) & 0x1;
                 cipher = (cipher << 1) + bit;
                 lenght++;
 
                 int idx = ShannonFano::findCode(codeTable, cipher, lenght);
                 if (idx != -1) {
-                    cout << "found: " << idx << endl;
 
                     cipher = 0;
                     lenght = 0;

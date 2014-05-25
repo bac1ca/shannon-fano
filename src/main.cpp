@@ -24,8 +24,8 @@ int main() {
     streampos size;
     char * memblock;
 
-    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
-//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
+//    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
+    char * path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
 
     ifstream file(path,ios::in | ios::binary | ios::ate);
     if (file.is_open()) {
@@ -40,12 +40,6 @@ int main() {
         vector<code *> codeTable  = s.getCodeTable();
 
 
-        cout << "-------- CODE TABLE -------" << endl;
-        ShannonFano::printCodes(codeTable);
-
-        cout << "-------- CODES -------" << endl;
-        ShannonFano::printCodes(codeStream);
-
         IOManager ioManager;
         ioManager.flushData("man.bin", codeTable, codeStream);
 
@@ -55,16 +49,13 @@ int main() {
             cout << codeStreamZipped[i]->symbol;
         }
 
-        cout << "size: " << size << endl;
+        cout << endl << "size of file: " << size << endl;
         free(memblock);
     } else {
         cout << "Unable to open file";
     }
 
-
 //    IOManager ioManager;
 //    ioManager.testIOManager();
-
-    cout << "The end!" << endl;
     return 0;
 }

@@ -10,8 +10,8 @@
 
 using namespace std;
 
-typedef struct _row { //TODO
-    char key;
+typedef struct _row {
+    char symbol;
     int count;
 } row;
 
@@ -57,8 +57,6 @@ private:
 public:
     static void printFreqTable(vector<row *> table);
     static void printCodes(vector<code *> codeTable);
-    static void printTree(tree* root);
-
     static int findCode(vector<code *> codes, unsigned int cipher, int count);
 
 
