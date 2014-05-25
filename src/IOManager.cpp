@@ -5,12 +5,9 @@
 #include "IOManager.h"
 
 IOManager::IOManager() {
-    m_cur = 0;
-    m_data = 0;
 }
 
 IOManager::~IOManager() {
-
 }
 
 void IOManager::flushData(char* fileName,
@@ -67,20 +64,22 @@ void IOManager::flushCode(FILE* file, int code, int len) {
 }
 
 
-void IOManager::readData(char* fileName,
-        vector<code *> * codeTable,
-        vector<code *> * codeStream) {
+vector<code *> IOManager::readData(char* fileName) {
+
+    vector <code *> codeStream;
 
     FILE * file= fopen(fileName, "rb");
     if (file != NULL) {
         // deserialize code table
+        vector<code *> codeTable;
+
         int codeTableLen = -1;
         fread(&codeTableLen, sizeof(int), 1, file);
 
         for (int i = 0; i < codeTableLen; i++) {
             code * codeEntity = new code;
             fread(codeEntity, sizeof(code), 1, file);
-            codeTable->push_back(codeEntity);
+            codeTable.push_back(codeEntity);
         }
 
         // deserialize code stream
@@ -89,22 +88,18 @@ void IOManager::readData(char* fileName,
         cout << "codeStreamLen: " << codeStreamLen << endl;
 
         int amount = 0;
-        m_data = 0;
-        m_cur =  0;
-
         unsigned int cipher = 0;
         unsigned int lenght = 0;
-        vector<code *> codes = *codeTable;
 
         while (fread(&m_data, sizeof(byte), 1, file) == 1
                && amount < codeStreamLen) {
 
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8 && amount < codeStreamLen; i++) {
                 int bit = ((m_data >> (7 - i))) & 0x1;
                 cipher = (cipher << 1) + bit;
                 lenght++;
 
-                int idx = ShannonFano::findCode(*codeTable, cipher, lenght);
+                int idx = ShannonFano::findCode(codeTable, cipher, lenght);
                 if (idx != -1) {
                     cout << "found: " << idx << endl;
 
@@ -112,15 +107,16 @@ void IOManager::readData(char* fileName,
                     lenght = 0;
                     amount++;
 
-                    code * c = codes[i];
-                    codeStream->push_back(c);
+                    code * c = codeTable[idx];
+                    codeStream.push_back(c);
                 }
             }
         }
-
-        cout << "Still live" << endl;
         fclose(file);
+    } else {
+        cerr << "Problem while reading file: " << fileName << endl;
     }
+    return codeStream;
 }
 
 
@@ -148,21 +144,19 @@ void IOManager::testIOManager() {
     codeTable.push_back(&M);
 
     vector<code *> codeStream;
+    codeStream.push_back(&M);
     codeStream.push_back(&A);
     codeStream.push_back(&N);
-    codeStream.push_back(&M);
+    codeStream.push_back(&N);
 
-    ShannonFano::printCodeTable(codeTable);
+    ShannonFano::printCodes(codeTable);
 
     flushData("result.bin", codeTable, codeStream);
 
 
     // Deserialize data
-    vector<code *> inCodeTable;
-    vector<code *> inCodeStream;
-    readData("result.bin", &inCodeTable, &inCodeStream);
-
-    ShannonFano::printCodeTable(inCodeTable);
+    vector<code *> fileCodeStream = readData("result.bin");
+    ShannonFano::printCodes(fileCodeStream);
 
     cout << "END OF THE TEST!!!" << endl;
 }

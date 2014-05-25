@@ -53,7 +53,7 @@ private:
 
 public:
     static void printTable(vector<row *> table);
-    static void printCodeTable(vector<code *> codeTable);
+    static void printCodes(vector<code *> codeTable);
     static void printTree(tree* root);
 
     static int findCode(vector<code *> codes, unsigned int cipher, int count);

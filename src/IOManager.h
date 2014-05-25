@@ -21,7 +21,7 @@ public:
 
 public:
     void flushData(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
-    void readData(char* fileName, vector<code *> * codeTable, vector<code *> * codeStream);
+    vector<code *> readData(char* fileName);
 
 private:
     void flushCode(FILE* file, int code, int len);

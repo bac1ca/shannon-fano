@@ -46,7 +46,7 @@ void ShannonFano::createTable(char* str, long len) {
 
 //    // TODO
     generateCodeTable(m_root);
-    printCodeTable(codeTable);
+    printCodes(codeTable);
 }
 
 void ShannonFano::buildTree(tree* root, vector<row *> list) {
@@ -193,7 +193,7 @@ void ShannonFano::printTable(vector<row *> table) {
     }
 }
 
-void ShannonFano::printCodeTable(vector<code *> codeTable) {
+void ShannonFano::printCodes(vector<code *> codeTable) {
     for (int i = 0; i < codeTable.size(); i++) {
         const int len = 8 * sizeof(unsigned int);
         cout << codeTable[i]->symbol
