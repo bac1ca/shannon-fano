@@ -39,15 +39,21 @@ int main() {
         vector<code *> codeStream = s.encode(memblock, size);
         vector<code *> codeTable  = s.getCodeTable();
 
-
         IOManager ioManager;
         ioManager.flushData("man.bin", codeTable, codeStream);
 
         vector<code *> codeStreamZipped = ioManager.readData("man.bin");
 
+
+
+        ofstream outputFile;
+        outputFile.open ("out.txt");
         for (int i = 0; i < codeStreamZipped.size(); i++) {
-            cout << codeStreamZipped[i]->symbol;
+            outputFile << codeStreamZipped[i]->symbol;
         }
+        outputFile.close();
+
+
 
         cout << endl << "size of file: " << size << endl;
         free(memblock);

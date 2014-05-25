@@ -17,6 +17,7 @@ vector<code *> ShannonFano::encode(char* str, long len) {
     clearResources();
 
     m_freqTable = createFreqTable(str, len);
+    //ShannonFano::printFreqTable(m_freqTable);
 
     tree* root = buildTree(m_freqTable);
 
