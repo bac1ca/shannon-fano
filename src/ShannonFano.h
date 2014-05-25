@@ -48,12 +48,16 @@ private:
     int find(vector<row *> table, char symbol);
     int findCode(vector<code *> codes, char symbol);
 
-    void printTable(vector<row *> table);
-    void printCodeTable(vector<code *> codeTable);
-    void printTree(tree* root);
-
     void buildTree(tree* t, vector<row *> table, int treeWeight);
     void bypassTree(tree* t, int value, int count);
+
+public:
+    static void printTable(vector<row *> table);
+    static void printCodeTable(vector<code *> codeTable);
+    static void printTree(tree* root);
+
+    static int findCode(vector<code *> codes, unsigned int cipher, int count);
+
 
 };
 

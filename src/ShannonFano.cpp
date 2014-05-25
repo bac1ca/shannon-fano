@@ -168,6 +168,25 @@ int ShannonFano::find(vector<row *> table, char symbol) {
     return -1;
 }
 
+int ShannonFano::findCode(vector<code *> codes, char symbol) {
+    for (int i = 0; i < codes.size(); i++) {
+        if (symbol == codes[i]->symbol) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int ShannonFano::findCode(vector<code *> codes, unsigned int cipher, int lenght) {
+    for (int i = 0; i < codes.size(); i++) {
+        if (cipher == codes[i]->cipher && lenght == codes[i]->lenght) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
 void ShannonFano::printTable(vector<row *> table) {
     for (int i = 0; i < table.size(); i++) {
         cout << table[i]->key << ":  " << table[i]->count << endl;
@@ -181,16 +200,6 @@ void ShannonFano::printCodeTable(vector<code *> codeTable) {
                 << ": " << bitset<len>(codeTable[i]->cipher)
                 << ": " << codeTable[i]->lenght << endl;
     }
-}
-
-int ShannonFano::findCode(vector<code *> codes, char symbol) {
-    for (int i = 0; i < codes.size(); i++) {
-        if (symbol == codes[i]->symbol) {
-            return i;
-        }
-    }
-    return -1;
-
 }
 
 void ShannonFano::printTree(tree* tree) {
