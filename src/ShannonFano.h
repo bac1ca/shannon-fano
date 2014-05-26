@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -41,6 +42,7 @@ public:
 public:
     vector<code *> encode(char* str, long len);
     vector<code *> getCodeTable();
+    vector<row  *> getFreqTable();
 
 private:
     vector<row *> createFreqTable(char* str, long len);
@@ -56,6 +58,7 @@ private:
     int findCode(vector<code *> codes, char symbol);
     void clearResources();
 
+    // utility methods, just for debugging
 public:
     static void printFreqTable(vector<row *> table);
     static void printCodes(vector<code *> codeTable);

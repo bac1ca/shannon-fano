@@ -4,6 +4,8 @@
 
 #include "IOManager.h"
 #include <stdio.h>
+#include <fstream>
+#include <bitset>
 
 IOManager::IOManager() {
 }
@@ -11,7 +13,35 @@ IOManager::IOManager() {
 IOManager::~IOManager() {
 }
 
-void IOManager::flushData(char* fileName,
+/**
+ * char buffer should be removed later
+ */
+int IOManager::readTextFile(char* fileName, char** memblock) {
+    streampos size;
+    ifstream file(fileName, ios::in | ios::binary | ios::ate);
+    if (file.is_open()) {
+        size = file.tellg();
+        *memblock = new char [size];
+        file.seekg(0, ios::beg);
+        file.read(*memblock, size);
+        file.close();
+    } else {
+        cerr << "Unable to open text file!" << endl;
+    }
+    return size;
+}
+
+void IOManager::writeAsText(char* fileName, vector<code *> codeStream) {
+    ofstream outputFile;
+    outputFile.open(fileName);
+    for (int i = 0; i < codeStream.size(); i++) {
+        outputFile << codeStream[i]->symbol;
+    }
+    outputFile.close();
+}
+
+
+void IOManager::writeAsCode(char* fileName,
         vector<code *> codeTable,
         vector<code *> codeStream) {
 
@@ -58,7 +88,7 @@ void IOManager::flushData(char* fileName,
     }
 }
 
-vector<code *> IOManager::readData(char* fileName) {
+vector<code *> IOManager::readCodeFile(char* fileName) {
 
     vector <code *> codeStream;
 
@@ -110,4 +140,33 @@ vector<code *> IOManager::readData(char* fileName) {
         cerr << "Problem while reading file: " << fileName << endl;
     }
     return codeStream;
+}
+
+bool sortByAlpha (row* i, row* j) { return (i->symbol < j->symbol); }
+bool sortByFreqn (row* i, row* j) { return (i->count > j->count); }
+
+void IOManager::writeFreqTable(char* fileName,
+        vector<row *> freqTable, int sortType) {
+
+    sort(freqTable.begin(), freqTable.end(),
+        sortType == BY_ALPHA ? sortByAlpha : sortByFreqn);
+
+    ofstream outputFile;
+    outputFile.open(fileName);
+    for (unsigned int i = 0; i < freqTable.size(); i++) {
+        outputFile << freqTable[i]->symbol << ":  " << freqTable[i]->count << endl;
+    }
+    outputFile.close();
+}
+
+void IOManager::writeCodeTable(char* fileName, vector<code *> codeTable) {
+    ofstream outputFile;
+    outputFile.open(fileName);
+    for (unsigned int i = 0; i < codeTable.size(); i++) {
+        const int len = 8 * sizeof(unsigned int);
+        outputFile << codeTable[i]->symbol
+                   << ": " << bitset<len>(codeTable[i]->cipher)
+                   << ": " << codeTable[i]->lenght << endl;
+    }
+    outputFile.close();
 }

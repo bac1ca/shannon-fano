@@ -9,6 +9,9 @@
 
 typedef unsigned char byte;
 
+#define BY_FREQN 0
+#define BY_ALPHA 1
+
 class IOManager {
 
 public:
@@ -16,8 +19,14 @@ public:
     virtual ~IOManager();
 
 public:
-    void flushData(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
-    vector<code *> readData(char* fileName);
+    int readTextFile(char* fileName, char** memblock);
+    void writeAsText(char* fileName, vector<code *> codeStream);
+
+    vector<code *> readCodeFile(char* fileName);
+    void writeAsCode(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
+
+    void writeFreqTable(char* fileName, vector<row  *> freqTable, int sortType);
+    void writeCodeTable(char* fileName, vector<code *> codeTable);
 
 };
 

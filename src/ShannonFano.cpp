@@ -3,7 +3,6 @@
  */
 
 #include "ShannonFano.h"
-#include <algorithm>
 #include <bitset>
 
 ShannonFano::ShannonFano() {
@@ -39,6 +38,10 @@ vector<code *> ShannonFano::encode(char* str, long len) {
 
 vector<code *> ShannonFano::getCodeTable() {
     return m_codeTable;
+}
+
+vector<row *>  ShannonFano::getFreqTable() {
+    return m_freqTable;
 }
 
 bool sortFunction (row* i, row* j) { return (i->count > j->count); }
