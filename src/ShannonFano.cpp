@@ -15,20 +15,21 @@ ShannonFano::~ShannonFano() {
 vector<code *> ShannonFano::encode(char* str, long len, int reduceLen) {
     clearResources();
 
+    // создание таблицы частот
     m_freqTable = createFreqTable(str, len);
     ShannonFano::printFreqTable(m_freqTable);
 
+    // построение кодового дерева
     tree* root = buildTree(m_freqTable);
 
+    // генерация кодовой таблицы по кодовому дереву
     generateCodeTable(root);
-    printCodes(m_codeTable);
-
     for (int i = 0; i < reduceLen; i++) {
         reduceCodeLen(m_codeTable);
     }
     printCodes(m_codeTable);
 
-
+    // кодирование входного текста с использованием таблицы кодов
     vector<code *> codeStream;
     for (int i = 0; i < len; i++) {
         char symbol = str[i];
@@ -75,6 +76,7 @@ vector<row *> ShannonFano::createFreqTable(char* str, long len) {
 
 tree* ShannonFano::buildTree(vector<row *> list) {
     tree* root = new tree;
+    m_treeCache.push_back(root);
     int listWeight = 0;
     for (unsigned int i = 0; i < list.size(); i++) {
         listWeight += list[i]->count;
@@ -88,6 +90,7 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
 
     if (size <= 2) {
         tree* left = new tree;
+        m_treeCache.push_back(left);
         left->data = list[0];
         left->left = NULL;
         left->right = NULL;
@@ -95,6 +98,7 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
 
         if (size == 2) {
             tree* right = new tree;
+            m_treeCache.push_back(right);
             right->data = list[1];
             right->left = NULL;
             right->right = NULL;
@@ -117,11 +121,13 @@ void ShannonFano::buildTree(tree* t, vector<row *> list, int listWeight) {
         vector<row *> rightList(list.begin() + midIdx + 1, list.end());
 
         tree* left = new tree;
+        m_treeCache.push_back(left);
         left->left = NULL;
         left->right = NULL;
         t->left = left;
 
         tree* right = new tree;
+        m_treeCache.push_back(right);
         right->left = NULL;
         right->right = NULL;
         t->right = right;
@@ -173,9 +179,6 @@ void ShannonFano::reduceCodeLen(vector<code *> codeTable) {
         maxLen = maxLen < len ? len : maxLen;
     }
 
-    cout << "maxLen: " << maxLen <<endl;
-
-
     int iter = 0;
     while(1) {
         int idx = findByLenght(codeTable, maxLen);
@@ -190,20 +193,13 @@ void ShannonFano::reduceCodeLen(vector<code *> codeTable) {
             break;
         }
 
-        cout << "maxCode: " << maxCode->symbol << " " << maxCode->lenght << endl;
-        cout << "minCode: " << minCode->symbol << " " << minCode->lenght << endl;
-
         if (iter % 2 == 0) {
-            cout << iter << " : full" << endl;
-
             minCode->cipher = minCode->cipher << 1;
             minCode->lenght++;
 
             maxCode->cipher = minCode->cipher +  1;
             maxCode->lenght = minCode->lenght;
         } else {
-            cout << iter << " : small" << endl;
-
             maxCode->cipher = maxCode->cipher >> 1;
             maxCode->lenght--;
         }
@@ -232,26 +228,6 @@ int ShannonFano::findByLenght(vector<code *> codeTable, int len) {
     }
     return -1;
 }
-
-int ShannonFano::getTreeHeight(tree* t) {
-    if (t->left == NULL && t->right == NULL) {
-        return 0;
-    }
-
-    int leftH = 0;
-    if (t->left != NULL) {
-        leftH = getTreeHeight(t->left);
-    }
-
-    int rightH = 0;
-    if (t->right != NULL) {
-        rightH = getTreeHeight(t->right);
-    }
-
-    int H = leftH > rightH ? leftH : rightH;
-    return H + 1;
-}
-
 
 int ShannonFano::findRow(vector<row *> table, char symbol) {
     for (unsigned int i = 0; i < table.size(); i++) {
