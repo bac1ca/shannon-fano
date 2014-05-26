@@ -12,15 +12,22 @@ ShannonFano::~ShannonFano() {
     clearResources();
 }
 
-vector<code *> ShannonFano::encode(char* str, long len) {
+vector<code *> ShannonFano::encode(char* str, long len, int reduceLen) {
     clearResources();
 
     m_freqTable = createFreqTable(str, len);
-    //ShannonFano::printFreqTable(m_freqTable);
+    ShannonFano::printFreqTable(m_freqTable);
 
     tree* root = buildTree(m_freqTable);
 
     generateCodeTable(root);
+    printCodes(m_codeTable);
+
+    for (int i = 0; i < reduceLen; i++) {
+        reduceCodeLen(m_codeTable);
+    }
+    printCodes(m_codeTable);
+
 
     vector<code *> codeStream;
     for (int i = 0; i < len; i++) {
@@ -159,6 +166,92 @@ void ShannonFano::bypassTree(tree* t, int value, int count) {
     }
 }
 
+void ShannonFano::reduceCodeLen(vector<code *> codeTable) {
+    int maxLen = -1;
+    for (int i = 0; i < codeTable.size(); i++) {
+        int len = codeTable[i]->lenght;
+        maxLen = maxLen < len ? len : maxLen;
+    }
+
+    cout << "maxLen: " << maxLen <<endl;
+
+
+    int iter = 0;
+    while(1) {
+        int idx = findByLenght(codeTable, maxLen);
+        int minIdx = findWithMinLenght(codeTable);
+        if (idx < 0) {
+            break;
+        }
+        code* maxCode = codeTable[idx];
+        code* minCode = codeTable[minIdx];
+        if (minCode->lenght >= maxLen) {
+            cerr << "WARN: minCode->lenght >= maxLen" << endl;
+            break;
+        }
+
+        cout << "maxCode: " << maxCode->symbol << " " << maxCode->lenght << endl;
+        cout << "minCode: " << minCode->symbol << " " << minCode->lenght << endl;
+
+        if (iter % 2 == 0) {
+            cout << iter << " : full" << endl;
+
+            minCode->cipher = minCode->cipher << 1;
+            minCode->lenght++;
+
+            maxCode->cipher = minCode->cipher +  1;
+            maxCode->lenght = minCode->lenght;
+        } else {
+            cout << iter << " : small" << endl;
+
+            maxCode->cipher = maxCode->cipher >> 1;
+            maxCode->lenght--;
+        }
+        iter++;
+    }
+}
+
+int ShannonFano::findWithMinLenght(vector<code *> codeTable) {
+    int result = -1;
+    int minLen = 65535;
+    for (int i = 0; i < codeTable.size(); i++) {
+        int len = codeTable[i]->lenght;
+        if (minLen > len) {
+            minLen = len;
+            result = i;
+        }
+    }
+    return result;
+}
+
+int ShannonFano::findByLenght(vector<code *> codeTable, int len) {
+    for (int i = 0; i < codeTable.size(); i++) {
+        if (codeTable[i]->lenght == len) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int ShannonFano::getTreeHeight(tree* t) {
+    if (t->left == NULL && t->right == NULL) {
+        return 0;
+    }
+
+    int leftH = 0;
+    if (t->left != NULL) {
+        leftH = getTreeHeight(t->left);
+    }
+
+    int rightH = 0;
+    if (t->right != NULL) {
+        rightH = getTreeHeight(t->right);
+    }
+
+    int H = leftH > rightH ? leftH : rightH;
+    return H + 1;
+}
+
 
 int ShannonFano::findRow(vector<row *> table, char symbol) {
     for (unsigned int i = 0; i < table.size(); i++) {
@@ -199,6 +292,20 @@ void ShannonFano::printCodes(vector<code *> codeTable) {
         cout << codeTable[i]->symbol
                 << ": " << bitset<len>(codeTable[i]->cipher)
                 << ": " << codeTable[i]->lenght << endl;
+    }
+}
+
+void ShannonFano::printTree(tree* t) {
+    if (t->left == NULL && t->right == NULL) {
+        cout << "LEAF: " << t->data->symbol <<endl;
+    }
+
+    if (t->right != NULL) {
+        printTree(t->right);
+    }
+
+    if (t->left != NULL) {
+        printTree(t->left);
     }
 }
 

@@ -40,7 +40,7 @@ public:
     virtual ~ShannonFano();
 
 public:
-    vector<code *> encode(char* str, long len);
+    vector<code *> encode(char* str, long len, int reduceCodeLen = 0);
     vector<code *> getCodeTable();
     vector<row  *> getFreqTable();
 
@@ -49,9 +49,19 @@ private:
     tree* buildTree(vector<row *> list);
     void  generateCodeTable(tree* root);
 
+    //TODO
+    void reduceCodeLen(vector<code *> codeTable);
+
+    int findWithMinLenght(vector<code *> codeTable);
+    int findByLenght(vector<code *> codeTable, int len);
+
 private:
     void buildTree(tree* t, vector<row *> table, int treeWeight);
     void bypassTree(tree* t, int value, int count);
+
+    // tree operations TODO
+    int getTreeHeight(tree* root);
+
 
     // utility methods
     int findRow(vector<row *> table, char symbol);
@@ -62,6 +72,8 @@ private:
 public:
     static void printFreqTable(vector<row *> table);
     static void printCodes(vector<code *> codeTable);
+    static void printTree(tree* root);
+
     static int findCode(vector<code *> codes, unsigned int cipher, int count);
 
 

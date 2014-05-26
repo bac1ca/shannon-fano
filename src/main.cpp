@@ -32,14 +32,16 @@ int main(int argc, char *argv[]) {
 //        return 0;
 //    }
 //    char* path = argv[1];
+//    char* path = "/home/vasisa/workspaces/cppworkspace42/shanon2/book.txt";
     char* path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
+
     char* memblock;
 
     IOManager ioManager;
     int size = ioManager.readTextFile(path, &memblock);
 
     ShannonFano shannonFano;
-    vector<code *> codeStream = shannonFano.encode(memblock, size);
+    vector<code *> codeStream = shannonFano.encode(memblock, size, 3);
     vector<code *> codeTable  = shannonFano.getCodeTable();
     vector<row  *> freqTable  = shannonFano.getFreqTable();
 
