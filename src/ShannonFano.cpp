@@ -15,21 +15,21 @@ ShannonFano::~ShannonFano() {
 vector<code *> ShannonFano::encode(char* str, long len, int reduceLen) {
     clearResources();
 
-    // создание таблицы частот
+    // create frequency table
     m_freqTable = createFreqTable(str, len);
     ShannonFano::printFreqTable(m_freqTable);
 
-    // построение кодового дерева
+    // build code tree
     tree* root = buildTree(m_freqTable);
 
-    // генерация кодовой таблицы по кодовому дереву
+    // generate code table using code tree
     generateCodeTable(root);
     for (int i = 0; i < reduceLen; i++) {
         reduceCodeLen(m_codeTable);
     }
     printCodes(m_codeTable);
 
-    // кодирование входного текста с использованием таблицы кодов
+    // encode input data (ASCII) using code table 
     vector<code *> codeStream;
     for (int i = 0; i < len; i++) {
         char symbol = str[i];

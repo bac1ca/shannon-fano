@@ -1,8 +1,8 @@
 Shannon-Fano algorithm implementation 
 ============
 How to build:
-0. run 'cmake .'
-1. run 'make' 
+0. run __'cmake .'__
+1. run __'make'__ 
 
 How to use:
-run './shannon_fano book.txt'
+run __'./shannon_fano book.txt'__

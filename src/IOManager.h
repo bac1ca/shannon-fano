@@ -13,7 +13,7 @@ typedef unsigned char byte;
 #define BY_ALPHA 1
 
 /**
- * Утилитный класс, отвечает за запись/считывание данных
+ * Unility class, resposible for writing/reading data
  */
 class IOManager {
 
@@ -23,32 +23,32 @@ public:
 
 public:
     /**
-     * Считывание текстового файла в память
+     * read text file to memory buffer
      */
     int readTextFile(char* fileName, char** memblock);
 
     /**
-     * Конвертация и запись потока кодов в текстовый файл
+     * write code stream to file
      */
     void writeAsText(char* fileName, vector<code *> codeStream);
 
     /**
-     * считывание потока кодов с бинарного файла
+     * read stream of codes from binary file
      */
     vector<code *> readCodeFile(char* fileName);
 
     /**
-     * запись таблицы кодов и потока кодов в бинарный файл
+     * write code table and stream of codes to bonary file
      */
     void writeAsCode(char* fileName, vector<code *> codeTable, vector<code *> codeStream);
 
     /**
-     * запись таблицы частот в текстовый файл
+     * write frequency table to text file
      */
     void writeFreqTable(char* fileName, vector<row  *> freqTable, int sortType);
 
     /**
-     * запись таблицы кодов в тестовый файл
+     * write code table to text file
      */
     void writeCodeTable(char* fileName, vector<code *> codeTable);
 

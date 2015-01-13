@@ -37,8 +37,7 @@ using namespace std;
 #define CODE_LEN_REDUCE_LEVEL3  3
 
 /**
- * Запуск Алгоритма Шеннона-Фано с сокращение длины кода на
- * reduceLenLevel соответственно
+ * Shannon-Fano algorithm with reduced code length - reduceLenLevel
  */
 void compressWithCodeLenRestrictions(char* memblock, int size,
         IOManager * ioManager, int reduceLenLevel) {
@@ -74,8 +73,8 @@ void compressWithCodeLenRestrictions(char* memblock, int size,
 }
 
 /**
- * запуск программы: должен быть указан путь,
- * как аргумент коммандной строки
+ * main function: 
+ * applies path to a book file as an command line argument 
  */
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -89,14 +88,14 @@ int main(int argc, char *argv[]) {
     //char* path = "/home/vasisa/workspaces/cppworkspace42/shanon2/potter.txt";
 
     /*
-     * Считывание файла
+     * Read book data
      */
     char* memblock;
     IOManager ioManager;
     int size = ioManager.readTextFile(path, &memblock);
 
     /*
-     * Запуск алгоритма Шеннона-Фано без ограниечений на длину кода
+     * Launch of Shannon-Fano alg witout any code legth restrictions
      */
     ShannonFano shannonFano;
     vector<code *> codeStream = shannonFano.encode(memblock, size);
@@ -104,19 +103,25 @@ int main(int argc, char *argv[]) {
     vector<row  *> freqTable  = shannonFano.getFreqTable();
 
     /**
-     * запись промежуточных файлов (в соответствии с требованиями
-     * к лаб. работе)
+     * Writes metadata files (optional step):
+     *   - table of symbols sorted by alphabet 
+     *   - table of symbols sorted by frequency
+     *   - table with code symbols
      */
     ioManager.writeFreqTable(SYMBOLS_ALPHA_FILE, freqTable, BY_ALPHA);
     ioManager.writeFreqTable(SYMBOLS_FREQN_FILE, freqTable, BY_FREQN);
     ioManager.writeCodeTable(CODES_FILE_0, codeTable);
 
+    /**
+     * decompress and write to file alredy encoded book
+     */
     ioManager.writeAsCode(COMPRESS_FILE, codeTable, codeStream);
     vector<code *> decompress = ioManager.readCodeFile(COMPRESS_FILE);
     ioManager.writeAsText(DECOMPRESS_FILE, decompress);
 
     /*
-     * Сокращение длины кода на 1, 2 и 3 соответственно
+     * Launch Shannon-Fano algorithm wit code length restrictions:
+     * code length is reduced for 1, 2 and 3 accodingly 
      */
     compressWithCodeLenRestrictions(memblock, size, &ioManager, CODE_LEN_REDUCE_LEVEL1);
     compressWithCodeLenRestrictions(memblock, size, &ioManager, CODE_LEN_REDUCE_LEVEL2);

@@ -41,7 +41,7 @@ public:
 
 public:
     /**
-     * кодировние входных тестровых данных
+     * encoding input text data
      */
     vector<code *> encode(char* str, long len, int reduceCodeLen = 0);
     vector<code *> getCodeTable();
@@ -49,22 +49,22 @@ public:
 
 private:
     /**
-     * генерация таблицы частот
+     * generate frequency table 
      */
     vector<row *> createFreqTable(char* str, long len);
 
     /**
-     * построние кодового дерева
+     * build code tree
      */
     tree* buildTree(vector<row *> list);
 
     /**
-     * генерация таблицы кодов по кодовому дереву
+     * generate code table using code tree
      */
     void  generateCodeTable(tree* root);
 
     /**
-     * методы предназначенные для согращения длины кода
+     * methods which are implemented for code length restrictions
      */
     void reduceCodeLen(vector<code *> codeTable);
     int findWithMinLenght(vector<code *> codeTable);
@@ -74,12 +74,13 @@ private:
     void buildTree(tree* t, vector<row *> table, int treeWeight);
     void bypassTree(tree* t, int value, int count);
 
-    // утилитные методы поиска в таюлице частот и кодов по символу
+    // utility methods for searching in frequency table 
+    // and for searching code by symbol    
     int findRow(vector<row *> table, char symbol);
     int findCode(vector<code *> codes, char symbol);
     void clearResources();
 
-    // утилитные методы для вывода информации на экран
+    // utility methods for printing information
 public:
     static void printFreqTable(vector<row *> table);
     static void printCodes(vector<code *> codeTable);
